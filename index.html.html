@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Convertisseur énergies</title>
+<style>
+  body{font-family:Arial, sans-serif;background:#f8f9fa;padding:2rem;}
+  .cards-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1100px;
+  }
+  .container{
+    flex: 1 1 350px;
+    max-width: 500px;
+    min-width: 300px;
+    margin: 1rem 0;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+    padding:1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .container h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    margin-top: 0;
+    text-align: left;
+    letter-spacing: 0.5px;
+    color: #222;
+    border-bottom: 1.5px solid #ececec;
+    padding-bottom: 0.5rem;
+    padding-left: 0.1rem;
+  }
+  label{display:block;margin-top:1rem;margin-bottom:0.5rem;font-weight:bold;}
+  input,select{width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:8px;font-size:1rem;}
+  .output{margin-top:1.5rem;background:#f1f3f5;padding:1rem;border-radius:8px;align-self: stretch;}
+  .output p{margin:0.3rem 0;font-size:1.1rem;}
+  footer{margin-top:1rem;font-size:0.85rem;color:#666;text-align:center;align-self: center;}
+
+  @media (max-width: 900px) {
+    .cards-wrapper {
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+    .container {
+      max-width: 100%;
+      min-width: 0;
+    }
+  }
+
+  .groupe-bois {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .groupe-bois h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #4e342e;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+  }
+  .carte-bois-plaquettes, .carte-bois-granule {
+    background: none;
+    border-left: 8px solid #a1887f;
+  }
+  .carte-fioul {
+    background: none;
+    border-left: 8px solid #ffd600;
+  }
+  .carte-propane {
+    background: none;
+    border-left: 8px solid #ff9800;
+  }
+  #titre-principal {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+  <h1 id="titre-principal">Convertisseur énergies</h1>
+<div class="cards-wrapper">
+  <div class="container carte-bois-plaquettes">
+    <h1>Bois Plaquettes</h1>
+    <label for="value">Valeur</label>
+    <input type="number" id="value" placeholder="Entrez une valeur" step="any">
+    <label for="unit">Unité de départ</label>
+    <select id="unit">
+      <option value="kwh">kWh</option>
+      <option value="kg">kg</option>
+      <option value="map">MAP</option>
+    </select>
+    <div class="output" id="output">
+      <p>kWh&nbsp;: <span id="out_kwh">-</span></p>
+      <p>kg&nbsp;: <span id="out_kg">-</span></p>
+      <p>MAP&nbsp;: <span id="out_map">-</span></p>
+      <p>t&nbsp;: <span id="out_t">-</span></p>
+      <p>Prix: <span id="out_prix_kwh">-</span> €</p>
+      <p>Émissions CO₂&nbsp;: <span id="out_co2">-</span> kg</p>
+    </div>
+    <footer> 
+      900&nbsp;kWh/MAP&nbsp; <br>
+      3&nbsp;500&nbsp;kWh/t&nbsp;<br>
+      1&nbsp;t = 3,75&nbsp;MAP (≈ 266,67&nbsp;kg/MAP)<br>
+      0,047&nbsp;€/kWh
+    </footer>
+  </div>
+  <div class="container carte-fioul">
+    <h1>Fioul domestique</h1>
+    <label for="fioul_value">Valeur</label>
+    <input type="number" id="fioul_value" placeholder="Entrez une valeur" step="any">
+    <label for="fioul_unit">Unité de départ</label>
+    <select id="fioul_unit">
+      <option value="kwh">kWh PCI</option>
+      <option value="litre">Litre</option>
+    </select>
+    <div class="output" id="fioul_output">
+      <p>kWh&nbsp;: <span id="fioul_out_kwh">-</span></p>
+      <p>Litre&nbsp;: <span id="fioul_out_litre">-</span></p>
+      <p>Émissions CO₂&nbsp;: <span id="fioul_out_co2">-</span> kg</p>
+    </div>
+    <footer>1&nbsp;litre = 10&nbsp;kWh</footer>
+  </div>
+  <div class="container carte-bois-granule">
+    <h1>Bois granulé</h1>
+    <label for="granule_value">Valeur</label>
+    <input type="number" id="granule_value" placeholder="Entrez une valeur" step="any">
+    <label for="granule_unit">Unité de départ</label>
+    <select id="granule_unit">
+      <option value="kwh">kWh PCI</option>
+      <option value="kg">kg</option>
+      <option value="sac">Sac (15 kg)</option>
+      <option value="t">Tonne</option>
+    </select>
+    <div class="output" id="granule_output">
+      <p>kWh PCI&nbsp;: <span id="granule_out_kwh">-</span></p>
+      <p>kg&nbsp;: <span id="granule_out_kg">-</span></p>
+      <p>Sac (15 kg)&nbsp;: <span id="granule_out_sac">-</span></p>
+      <p>Tonne&nbsp;: <span id="granule_out_t">-</span></p>
+      <p>Prix&nbsp;: <span id="granule_out_prix">-</span> €</p>
+      <p>Émissions CO₂&nbsp;: <span id="granule_out_co2">-</span> kg</p>
+    </div>
+    <footer>
+      <div style="text-align:left;font-size:0.95em;line-height:1.5;">
+        1 sac = 15&nbsp;kg<br>
+        1 sac = 5 à 9&nbsp;€<br>
+        398&nbsp;€TTC/tonne<br>
+        0,075&nbsp;€/kWh<br>
+        PCI vrac&nbsp;: 4,4 à 4,6&nbsp;kWh/kg<br>
+        PCI vrac&nbsp;: 4&nbsp;900&nbsp;kWh/t<br>
+      </div>
+    </footer>
+  </div>
+  <div class="container carte-propane">
+    <h1>Propane</h1>
+    <label for="propane_value">Valeur</label>
+    <input type="number" id="propane_value" placeholder="Entrez une valeur" step="any">
+    <label for="propane_unit">Unité de départ</label>
+    <select id="propane_unit">
+      <option value="kwh">kWh PCI</option>
+      <option value="kg">kg</option>
+    </select>
+    <div class="output" id="propane_output">
+      <p>kWh&nbsp;: <span id="propane_out_kwh">-</span></p>
+      <p>kg&nbsp;: <span id="propane_out_kg">-</span></p>
+      <p>Émissions CO₂&nbsp;: <span id="propane_out_co2">-</span> kg</p>
+    </div>
+    <footer>1&nbsp;kg = 12,8&nbsp;kWh</footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  // convertisseur bois plaquettes
+  const KG_PER_MAP = 1000 / 3.75; // ≈ 266.67 kg
+  const KWH_PER_MAP = 900;
+  const KWH_PER_TON = 3500;
+  const input = document.getElementById('value');
+  const unit = document.getElementById('unit');
+  const out_kwh = document.getElementById('out_kwh');
+  const out_kg = document.getElementById('out_kg');
+  const out_map = document.getElementById('out_map');
+  const out_t = document.getElementById('out_t');
+  const out_prix_kwh = document.getElementById('out_prix_kwh');
+  function convert(){
+    const val = parseFloat(input.value);
+    if(isNaN(val)){
+      out_kwh.textContent = out_kg.textContent = out_map.textContent = out_t.textContent = '-';
+      out_prix_kwh.textContent = '-';
+      return;
+    }
+    let kwh, kg, map, t;
+    switch(unit.value){
+      case 'kwh':
+        kwh = val;
+        map = kwh / KWH_PER_MAP;
+        kg = map * KG_PER_MAP;
+        break;
+      case 'kg':
+        kg = val;
+        map = kg / KG_PER_MAP;
+        kwh = map * KWH_PER_MAP;
+        break;
+      case 'map':
+        map = val;
+        kg = map * KG_PER_MAP;
+        kwh = map * KWH_PER_MAP;
+        break;
+    }
+    t = kg / 1000;
+    const prix_kwh = kwh * 0.047;
+    out_kwh.textContent = kwh.toLocaleString('fr-FR', {maximumFractionDigits: 1});
+    out_kg.textContent = kg.toLocaleString('fr-FR', {maximumFractionDigits: 1});
+    out_map.textContent = map.toLocaleString('fr-FR', {maximumFractionDigits: 3});
+    out_t.textContent = t.toLocaleString('fr-FR', {maximumFractionDigits: 3});
+    out_prix_kwh.textContent = prix_kwh.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    // Ajout CO2
+    const co2 = kwh * 0.03; // 0,03 kgCO2/kWh
+    document.getElementById('out_co2').textContent = co2.toLocaleString('fr-FR', {maximumFractionDigits: 2});
+  }
+  input.addEventListener('input', convert);
+  unit.addEventListener('change', convert);
+
+  // Convertisseur fioul
+  const FIOUL_KWH_PER_LITRE = 10;
+  const fioulInput = document.getElementById('fioul_value');
+  const fioulUnit = document.getElementById('fioul_unit');
+  const fioulOutKwh = document.getElementById('fioul_out_kwh');
+  const fioulOutLitre = document.getElementById('fioul_out_litre');
+  function convertFioul(){
+    const val = parseFloat(fioulInput.value);
+    if(isNaN(val)){
+      fioulOutKwh.textContent = fioulOutLitre.textContent = '-';
+      return;
+    }
+    let kwh, litre;
+    if(fioulUnit.value === 'kwh'){
+      kwh = val;
+      litre = kwh / FIOUL_KWH_PER_LITRE;
+    } else {
+      litre = val;
+      kwh = litre * FIOUL_KWH_PER_LITRE;
+    }
+    fioulOutKwh.textContent = kwh.toLocaleString('fr-FR', {maximumFractionDigits: 1});
+    fioulOutLitre.textContent = litre.toLocaleString('fr-FR', {maximumFractionDigits: 2});
+    // Ajout CO2
+    const fioul_co2 = kwh * 0.267; // 0,267 kgCO2/kWh
+    document.getElementById('fioul_out_co2').textContent = fioul_co2.toLocaleString('fr-FR', {maximumFractionDigits: 2});
+  }
+  fioulInput.addEventListener('input', convertFioul);
+  fioulUnit.addEventListener('change', convertFioul);
+
+  // Convertisseur propane
+  const PROPANE_KWH_PER_KG = 12.8;
+  const propaneInput = document.getElementById('propane_value');
+  const propaneUnit = document.getElementById('propane_unit');
+  const propaneOutKwh = document.getElementById('propane_out_kwh');
+  const propaneOutKg = document.getElementById('propane_out_kg');
+  function convertPropane(){
+    const val = parseFloat(propaneInput.value);
+    if(isNaN(val)){
+      propaneOutKwh.textContent = propaneOutKg.textContent = '-';
+      return;
+    }
+    let kwh, kg;
+    if(propaneUnit.value === 'kwh'){
+      kwh = val;
+      kg = kwh / PROPANE_KWH_PER_KG;
+    } else {
+      kg = val;
+      kwh = kg * PROPANE_KWH_PER_KG;
+    }
+    propaneOutKwh.textContent = kwh.toLocaleString('fr-FR', {maximumFractionDigits: 1});
+    propaneOutKg.textContent = kg.toLocaleString('fr-FR', {maximumFractionDigits: 2});
+    // Ajout CO2
+    const propane_co2 = kwh * 0.234; // 0,234 kgCO2/kWh
+    document.getElementById('propane_out_co2').textContent = propane_co2.toLocaleString('fr-FR', {maximumFractionDigits: 2});
+  }
+  propaneInput.addEventListener('input', convertPropane);
+  propaneUnit.addEventListener('change', convertPropane);
+
+  // Convertisseur bois granulé
+  const GRANULE_KWH_PER_KG = 4.9; // PCI moyen (4,4 à 4,6, mais 4,9 pour 4900 kWh/t)
+  const GRANULE_KG_PER_SAC = 15;
+  const GRANULE_KWH_PER_T = 4900;
+  const GRANULE_KG_PER_T = 1000;
+  const granuleInput = document.getElementById('granule_value');
+  const granuleUnit = document.getElementById('granule_unit');
+  const granuleOutKwh = document.getElementById('granule_out_kwh');
+  const granuleOutKg = document.getElementById('granule_out_kg');
+  const granuleOutSac = document.getElementById('granule_out_sac');
+  const granuleOutT = document.getElementById('granule_out_t');
+  const granuleOutPrix = document.getElementById('granule_out_prix');
+  function convertGranule(){
+    const val = parseFloat(granuleInput.value);
+    if(isNaN(val)){
+      granuleOutKwh.textContent = granuleOutKg.textContent = granuleOutSac.textContent = granuleOutT.textContent = '-';
+      granuleOutPrix.textContent = '-';
+      return;
+    }
+    let kwh, kg, sac, t;
+    switch(granuleUnit.value){
+      case 'kwh':
+        kwh = val;
+        kg = kwh / GRANULE_KWH_PER_KG;
+        sac = kg / GRANULE_KG_PER_SAC;
+        t = kg / GRANULE_KG_PER_T;
+        break;
+      case 'kg':
+        kg = val;
+        kwh = kg * GRANULE_KWH_PER_KG;
+        sac = kg / GRANULE_KG_PER_SAC;
+        t = kg / GRANULE_KG_PER_T;
+        break;
+      case 'sac':
+        sac = val;
+        kg = sac * GRANULE_KG_PER_SAC;
+        kwh = kg * GRANULE_KWH_PER_KG;
+        t = kg / GRANULE_KG_PER_T;
+        break;
+      case 't':
+        t = val;
+        kg = t * GRANULE_KG_PER_T;
+        kwh = kg * GRANULE_KWH_PER_KG;
+        sac = kg / GRANULE_KG_PER_SAC;
+        break;
+    }
+    // Prix à partir du nombre de tonnes
+    const prix = t * 398;
+    granuleOutKwh.textContent = kwh.toLocaleString('fr-FR', {maximumFractionDigits: 1});
+    granuleOutKg.textContent = kg.toLocaleString('fr-FR', {maximumFractionDigits: 1});
+    granuleOutSac.textContent = sac.toLocaleString('fr-FR', {maximumFractionDigits: 2});
+    granuleOutT.textContent = t.toLocaleString('fr-FR', {maximumFractionDigits: 3});
+    granuleOutPrix.textContent = prix.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    // Ajout CO2
+    const granule_co2 = kwh * 0.03; // 0,03 kgCO2/kWh
+    document.getElementById('granule_out_co2').textContent = granule_co2.toLocaleString('fr-FR', {maximumFractionDigits: 2});
+  }
+  granuleInput.addEventListener('input', convertGranule);
+  granuleUnit.addEventListener('change', convertGranule);
+})();
+</script>
+</body>
+</html>
